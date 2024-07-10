@@ -17,17 +17,9 @@ export default function Home() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    const authentication = getAuth();    
-    //console.log("******userid: " + authentication.currentUser.uid)  
-    console.log('*****')  
-    //console.log(authentication)
-    //console.log(authentication.currentUser)  
-    console.log('*****')  
-
     const ref = collection(db, 'articles');
 
     onSnapshot(ref, (snapshot)=>{
-        console.log(snapshot);
         let results = []
          snapshot.docs.forEach(doc => {
            results.push({id: doc.id, ...doc.data()});

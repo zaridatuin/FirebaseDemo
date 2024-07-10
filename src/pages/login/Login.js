@@ -1,13 +1,12 @@
 import { useState,useContext,useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, confirmPasswordReset } from 'firebase/auth'
 import { UserContext } from '../../context/UserContext';
 
 // styles
 import styles from './Login.module.css'
 
 export default function Login() {
-  const {setUser} = useContext(UserContext);
+  const {login} = useContext(UserContext);
 
   const email = useRef()
   const password = useRef()
@@ -18,21 +17,17 @@ export default function Login() {
   const handleSubmit = async (e) =>  {
     e.preventDefault()  
     setIsPending(true)
-    try{
-      const authentication = getAuth();
-      const res = await signInWithEmailAndPassword(authentication, email.current.value, password.current.value);
-      setUser(res.user.displayName)
-      console.log("display name: ")
-      console.log(res.user)
-      if(res.user){
-          navigate('/')
-      }
+    login(email.current.value, password.current.value)
+    .then(() => {
+        setIsPending(false)
+        navigate('/')
+    })
+    .catch((error) => {
+      // Handle Errors here.
       setIsPending(false)
-      console.log(res.user.email);
-    }catch(err){
-      setIsPending(false)
-      setError(err.message)
-    }    
+      setError(error.message)
+    });
+
   }
 
   return (              
