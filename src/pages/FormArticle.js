@@ -5,10 +5,10 @@ import {db} from '../firebase/config'
 // styles
 import './create.css'
 
-export default function Create() {  
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [description, setDescription] = useState('')
+export default function Create() {
+  const titleRef = useRef()
+  const authorRef = useRef()
+  const descriptionRef = useRef()
   
   const navigate = useNavigate()
   
@@ -21,9 +21,9 @@ export default function Create() {
       getDoc(ref).then((snapshot)=>{
         const article = snapshot.data();
         if(article){
-          setTitle(article.title);
-          setDescription(article.description);
-          setAuthor(article.author);
+          titleRef.current.value = article.title;
+          descriptionRef.current.value = article.description;
+          authorRef.current.value = article.author;
         }else{
           navigate('/')
         }
@@ -33,8 +33,8 @@ export default function Create() {
   },[]);
 
   const handleSubmit = async (e) => {
-    e.preventDefault()  
-    const article = {title,author,description};
+    e.preventDefault()
+    const article = {title: titleRef.current.value, author: authorRef.current.value, description: descriptionRef.current.value};
 
     if(urlId){ 
        const ref = doc(db, 'articles', urlId);     
@@ -42,12 +42,7 @@ export default function Create() {
     }else{      
       const ref = collection(db, 'articles')
       await addDoc(ref,article)
-    } 
-    
-
-    // setTitle("");
-    // setAuthor("");
-    // setDescription("");
+    }
 
     navigate('/')
   } 
@@ -61,9 +56,8 @@ export default function Create() {
         <label>
           <span>Title:</span>
           <input 
-            type="text" 
-            onChange={(e) => setTitle(e.target.value)}
-            value={title}
+            type="text"
+            ref={titleRef}
             required
           />
         </label>
@@ -71,18 +65,16 @@ export default function Create() {
         <label>
           <span>Author:</span>
           <input 
-            type="text" 
-            onChange={(e) => setAuthor(e.target.value)}
-            value={author}
+            type="text"
+            ref={authorRef}
             required
           />
         </label>
 
         <label>
           <span>Description:</span>
-          <textarea 
-            onChange={(e) => setDescription(e.target.value)}
-            value={description}
+          <textarea
+            ref={descriptionRef}
             required
           />
         </label>

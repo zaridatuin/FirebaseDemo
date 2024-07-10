@@ -1,5 +1,5 @@
 import {useState, useContext, useRef} from 'react'
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, confirmPasswordReset, updateProfile } from 'firebase/auth'
+import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
 import { UserContext } from '../../context/UserContext';
 import { useNavigate } from 'react-router-dom'
 
@@ -7,11 +7,11 @@ import { useNavigate } from 'react-router-dom'
 import styles from './Signup.module.css'
 
 export default function Signup() {
-  const {user, setUser} = useContext(UserContext);
+  //const {setUser} = useContext(UserContext);
 
-  const email = useRef()
-  const password = useRef()
-  const displayName = useRef()
+  const emailRef = useRef()
+  const passwordRef = useRef()
+  const displayNameRef = useRef()
   const [error, setError] = useState(null)
   const [isPending, setIsPending] = useState('')
   const navigate = useNavigate()
@@ -21,16 +21,12 @@ export default function Signup() {
     setIsPending(true)
     try{
       const authentication = getAuth();
-      const res = await createUserWithEmailAndPassword(authentication, email.current.value, password.current.value);
-      setUser(displayName.current.value)
-      console.log(res.user.displayName)
+      const res = await createUserWithEmailAndPassword(authentication, emailRef.current.value, passwordRef.current.value);
       if(res.user){
           navigate('/')
       }
+      await updateProfile(authentication.currentUser, { displayName: displayNameRef.current.value })
       setIsPending(false)
-      console.log(res.user.email);
-      await updateProfile(authentication.currentUser, { displayName: displayName.current.value })
-      console.log(displayName.current.value)
     }catch(err){
       setIsPending(false)
       setError(err.message)
@@ -44,21 +40,21 @@ export default function Signup() {
         <span>email:</span>
         <input 
           type="email"
-          ref={email}
+          ref={emailRef}
         />
       </label>
       <label>
         <span>password:</span>
         <input 
           type="password"
-          ref={password}
+          ref={passwordRef}
         />
       </label>
       <label>
         <span>display name:</span>
         <input 
           type="text"
-          ref={displayName}
+          ref={displayNameRef}
         />
       </label>
       { !isPending && <button className="btn">sign up</button> }
