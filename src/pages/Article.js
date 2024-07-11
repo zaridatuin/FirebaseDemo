@@ -1,19 +1,16 @@
 import { useParams } from "react-router-dom"
-import {getDoc, doc} from 'firebase/firestore';
-import {db} from '../firebase/config'
 import { useEffect,useState } from 'react';
+import {getArticle} from "../services/articleService";
 
 export default function Article() {
   const { urlId } = useParams()
   const [article, setArticle] = useState(null);
 
   useEffect(() => {
-    const ref = doc(db, 'articles', urlId);
-    getDoc(ref)
+    getArticle(urlId)
       .then((snapshot)=>{        
         setArticle(snapshot.data());
       })
-
   },[])
 
   return (

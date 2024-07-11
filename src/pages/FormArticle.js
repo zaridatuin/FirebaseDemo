@@ -1,9 +1,8 @@
-import { useState, useRef, useEffect } from 'react'
+import { useRef, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import {collection, addDoc, doc, getDoc, updateDoc} from 'firebase/firestore';
-import {db} from '../firebase/config'
 // styles
 import './create.css'
+import {addArticle, getArticle, updateArticle} from "../services/articleService";
 
 export default function Create() {
   const titleRef = useRef()
@@ -16,9 +15,7 @@ export default function Create() {
 
   useEffect(() => {
     if(urlId){
-      const ref = doc(db, 'articles', urlId);    
-      
-      getDoc(ref).then((snapshot)=>{
+      getArticle(urlId).then((snapshot)=>{
         const article = snapshot.data();
         if(article){
           titleRef.current.value = article.title;
@@ -35,13 +32,10 @@ export default function Create() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     const article = {title: titleRef.current.value, author: authorRef.current.value, description: descriptionRef.current.value};
-
-    if(urlId){ 
-       const ref = doc(db, 'articles', urlId);     
-       await updateDoc(ref, article)  
-    }else{      
-      const ref = collection(db, 'articles')
-      await addDoc(ref,article)
+    if(urlId){
+      await updateArticle(urlId,article)
+    }else{
+      await addArticle(article)
     }
 
     navigate('/')
