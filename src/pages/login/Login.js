@@ -1,13 +1,11 @@
-import { useState,useContext,useRef } from 'react'
+import { useState,useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { UserContext } from '../../context/UserContext';
 
 // styles
 import styles from './Login.module.css'
+import {login} from "../../services/authService";
 
 export default function Login() {
-  const {login} = useContext(UserContext);
-
   const email = useRef()
   const password = useRef()
   const [isPending, setIsPending] = useState(false)
@@ -15,8 +13,8 @@ export default function Login() {
   const navigate = useNavigate()
 
   const handleSubmit = async (e) =>  {
-    e.preventDefault()  
-    setIsPending(true)
+    e.preventDefault();
+    setIsPending(true);
     login(email.current.value, password.current.value)
     .then(() => {
         setIsPending(false)

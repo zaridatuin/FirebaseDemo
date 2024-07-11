@@ -2,13 +2,14 @@ import { NavLink} from 'react-router-dom'
 import React, {useContext} from 'react';
 import { UserContext } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom'
+import {logout} from "../services/authService";
 
 export default function Navbar() {
-    const {user, logout} = useContext(UserContext);
+    const {user} = useContext(UserContext);
     const navigate = useNavigate()
 
-    const handleLogout = async (e) =>  {
-        logout();
+    const handleLogout = async () =>  {
+        await logout();
         navigate('/login')
       }
 
@@ -34,7 +35,7 @@ export default function Navbar() {
 
           {user && (
               <>
-              hello, {user}
+              hello, {user.displayName}
               <button className="btn" onClick={handleLogout}>Logout</button>
               </>
           )}
